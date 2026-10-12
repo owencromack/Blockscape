@@ -9,6 +9,8 @@ const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, .1, 140
 const renderer = new THREE.WebGLRenderer({ antialias:false, powerPreference:"high-performance" });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
 renderer.setSize(innerWidth, innerHeight);
+renderer.domElement.style.touchAction = "none";
+renderer.domElement.style.userSelect = "none";
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 game.appendChild(renderer.domElement);
 
@@ -117,7 +119,13 @@ function generateWorld(){
     if(randomAt(x*5+11,z*9-2)>.988&&Math.abs(x)>2)addBlock(x,h+1,z,"apple",false);
   }
   player.x=0;player.z=0;player.feetY=terrainHeight(0,0)+.51;
-  yaw=0;pitch=0;verticalVelocity=0;health=20;dayClock=0;dayNumber=1;
+  yaw=Math.PI;pitch=0;verticalVelocity=0;health=20;dayClock=0;dayNumber=1;
+  // Keep the spawn area open so the player cannot start inside nearby tree leaves.
+  for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++){
+    for(let y=terrainHeight(x,z)+1;y<=terrainHeight(x,z)+5;y++){
+      if(getBlock(x,y,z) && (getBlock(x,y,z)==="leaves" || getBlock(x,y,z)==="wood")) removeBlock(x,y,z,false);
+    }
+  }
   for(const k of Object.keys(inventory))inventory[k]=0;
   if(mode==="survival"){inventory.apple=3;inventory.wood=2;inventory.dirt=8;}
   dirty=false;updateCamera();renderHotbar();updateHUD();showToast("New "+mode+" world created!");
@@ -399,8 +407,13 @@ document.querySelectorAll(".move").forEach(b=>{
 });
 renderer.domElement.addEventListener("pointerdown",e=>{
   if(!playing||actionLock)return;
-  if(e.pointerType==="mouse"){if(e.button===0)breakOrPunch();return;}
-  if(e.clientX>innerWidth*.38){lookPointer=e.pointerId;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);}
+  // Drag with a mouse or finger to look around. Use E / the BREAK button to mine.
+  // The left side remains available for movement controls.
+  if(e.clientX>innerWidth*.30){
+    lookPointer=e.pointerId;lastX=e.clientX;lastY=e.clientY;
+    try { renderer.domElement.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+  }
 });
 renderer.domElement.addEventListener("pointermove",e=>{
   if(e.pointerId!==lookPointer)return;
@@ -423,7 +436,8 @@ window.addEventListener("keyup",e=>{
   const map={KeyW:"forward",ArrowUp:"forward",KeyS:"back",ArrowDown:"back",KeyA:"left",ArrowLeft:"left",KeyD:"right",ArrowRight:"right"};
   if(map[e.code])keys.delete(map[e.code]);if(e.code==="KeyF")keys.delete("flyup");if(e.code==="ShiftLeft")keys.delete("flydown");
 });
-window.addEventListener("blur",()=>keys.clear());
+window.addEventListener("blur",()=>{keys.clear();lookPointer=null;});
+document.addEventListener("visibilitychange",()=>{if(document.hidden){keys.clear();lookPointer=null;}});
 window.addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
 
 function animate(t=0){
