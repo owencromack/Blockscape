@@ -58,3 +58,6 @@ button:active { transform:scale(.96); background:#4c7e48; }
   #hud { top:52px; font-size:12px; }
   .slot { height:45px; }
 }
+/* Extra touch reliability for iPad and other touchscreens. */
+.move, #actions button, #hotbar button { touch-action:none; }
+#game { overflow:hidden; }
