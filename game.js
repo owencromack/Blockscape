@@ -4,10 +4,10 @@ const $ = s => document.querySelector(s);
 const game = $("#game");
 const scene = new THREE.Scene();
 scene.background = new THREE.Color("#8bc9fa");
-scene.fog = new THREE.Fog("#8bc9fa", 22, 68);
+scene.fog = new THREE.Fog("#8bc9fa", 18, 58);
 const camera = new THREE.PerspectiveCamera(72, innerWidth / innerHeight, .1, 140);
 const renderer = new THREE.WebGLRenderer({ antialias:false, powerPreference:"high-performance" });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.25));
 renderer.setSize(innerWidth, innerHeight);
 renderer.domElement.style.touchAction = "none";
 renderer.domElement.style.userSelect = "none";
@@ -105,9 +105,9 @@ function clearWorld(){
 }
 function generateWorld(){
   clearWorld();
-  for(let x=-16;x<=16;x++)for(let z=-16;z<=16;z++){
+  for(let x=-14;x<=14;x++)for(let z=-14;z<=14;z++){
     const h=terrainHeight(x,z);
-    for(let y=-7;y<=h;y++){
+    for(let y=Math.max(-3,h-4);y<=h;y++){
       let type=y===h?"grass":y>=h-2?"dirt":"stone";
       if(y<h-2){
         const r=randomAt(x*13+y*3,z*11-y*5);
@@ -118,14 +118,18 @@ function generateWorld(){
     if(!(Math.abs(x)<4&&Math.abs(z)<4)&&randomAt(x*7,z*7)>.975)tree(x,h,z);
     if(randomAt(x*5+11,z*9-2)>.988&&Math.abs(x)>2)addBlock(x,h+1,z,"apple",false);
   }
-  player.x=0;player.z=0;player.feetY=terrainHeight(0,0)+.51;
+  player.x=0;player.z=0;player.feetY=terrainHeight(0,0)+.56;
   yaw=Math.PI;pitch=0;verticalVelocity=0;health=20;dayClock=0;dayNumber=1;
   // Keep the spawn area open so the player cannot start inside nearby tree leaves.
-  for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++){
-    for(let y=terrainHeight(x,z)+1;y<=terrainHeight(x,z)+5;y++){
-      if(getBlock(x,y,z) && (getBlock(x,y,z)==="leaves" || getBlock(x,y,z)==="wood")) removeBlock(x,y,z,false);
+  for(let x=-2;x<=2;x++)for(let z=-2;z<=2;z++){
+    const surface=terrainHeight(x,z);
+    for(let y=surface+1;y<=surface+4;y++){
+      const existing=getBlock(x,y,z);
+      if(existing)removeBlock(x,y,z,false);
     }
   }
+  // Recalculate spawn height after terrain has been cleared.
+  player.feetY=terrainHeight(0,0)+.56;
   for(const k of Object.keys(inventory))inventory[k]=0;
   if(mode==="survival"){inventory.apple=3;inventory.wood=2;inventory.dirt=8;}
   dirty=false;updateCamera();renderHotbar();updateHUD();showToast("New "+mode+" world created!");
@@ -150,10 +154,26 @@ function groundBelow(px,feetY,pz){
   return false;
 }
 function movePlayer(dx,dz,dt){
-  const nx=player.x+dx*dt;
-  if(!collides(nx,player.feetY,player.z))player.x=nx;
-  const nz=player.z+dz*dt;
-  if(!collides(player.x,player.feetY,nz))player.z=nz;
+  // Try normal movement first. If a one-block-high ledge blocks the way,
+  // step up onto it when there is room for the player's body.
+  const tryAxis=(axis,delta)=>{
+    if(!delta)return;
+    const nx=axis==="x"?player.x+delta:player.x;
+    const nz=axis==="z"?player.z+delta:player.z;
+    if(!collides(nx,player.feetY,nz)){
+      if(axis==="x")player.x=nx;else player.z=nz;
+      return;
+    }
+    if(grounded || groundBelow(player.x,player.feetY,player.z)){
+      const raisedY=player.feetY+1;
+      if(!collides(nx,raisedY,nz) && groundBelow(nx,raisedY,nz)){
+        if(axis==="x")player.x=nx;else player.z=nz;
+        player.feetY=raisedY;verticalVelocity=0;grounded=true;
+      }
+    }
+  };
+  tryAxis("x",dx*dt);
+  tryAxis("z",dz*dt);
 }
 function updatePlayer(dt){
   const f=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
@@ -252,7 +272,7 @@ function spawnMobs(){
   for(let i=0;i<3;i++){
     const x=Math.round(player.x+(Math.random()-.5)*24),z=Math.round(player.z+(Math.random()-.5)*24);
     if(Math.abs(x-player.x)<5&&Math.abs(z-player.z)<5)continue;
-    if(Math.abs(x)>16||Math.abs(z)>16)continue;
+    if(Math.abs(x)>14||Math.abs(z)>14)continue;
     const type=dayClock>0.5?"slime":(Math.random()>.5?"sheep":"pig");
     spawnMob(type,x,z);
   }
@@ -401,11 +421,21 @@ $("#eatBtn").addEventListener("click",eatFood);
 
 document.querySelectorAll(".move").forEach(b=>{
   const dir=b.dataset.move;
-  b.addEventListener("pointerdown",e=>{e.preventDefault();if(!playing)return;keys.add(dir);b.setPointerCapture(e.pointerId);});
-  const release=()=>keys.delete(dir);
-  b.addEventListener("pointerup",release);b.addEventListener("pointercancel",release);b.addEventListener("lostpointercapture",release);
+  const press=e=>{
+    e.preventDefault();
+    if(!playing)return;
+    keys.add(dir);
+    try{b.setPointerCapture(e.pointerId);}catch(_){}
+  };
+  const release=e=>{if(e)e.preventDefault();keys.delete(dir);};
+  b.addEventListener("pointerdown",press,{passive:false});
+  b.addEventListener("pointerup",release,{passive:false});
+  b.addEventListener("pointercancel",release,{passive:false});
+  b.addEventListener("lostpointercapture",release);
+  b.addEventListener("contextmenu",e=>e.preventDefault());
 });
 renderer.domElement.addEventListener("pointerdown",e=>{
+  e.preventDefault();
   if(!playing||actionLock)return;
   // Drag with a mouse or finger to look around. Use E / the BREAK button to mine.
   // The left side remains available for movement controls.
@@ -414,12 +444,13 @@ renderer.domElement.addEventListener("pointerdown",e=>{
     try { renderer.domElement.setPointerCapture(e.pointerId); } catch (_) {}
     e.preventDefault();
   }
-});
+},{passive:false});
 renderer.domElement.addEventListener("pointermove",e=>{
   if(e.pointerId!==lookPointer)return;
+  e.preventDefault();
   yaw-=(e.clientX-lastX)*.005;pitch-=(e.clientY-lastY)*.005;
   lastX=e.clientX;lastY=e.clientY;pitch=THREE.MathUtils.clamp(pitch,-1.45,1.45);updateCamera();
-});
+},{passive:false});
 function endLook(e){if(e.pointerId===lookPointer)lookPointer=null;}
 renderer.domElement.addEventListener("pointerup",endLook);renderer.domElement.addEventListener("pointercancel",endLook);
 window.addEventListener("keydown",e=>{
@@ -446,4 +477,12 @@ function animate(t=0){
   if(playing){updatePlayer(dt);updateMobs(dt);updateTime(dt);updateOutline();}
   renderer.render(scene,camera);
 }
-updateCamera();renderHotbar();updateHUD();animate();
+function initializeDisplay(){
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+  updateCamera();renderHotbar();updateHUD();
+  renderer.render(scene,camera);
+}
+initializeDisplay();
+requestAnimationFrame(animate);
