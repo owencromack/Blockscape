@@ -1,7 +1,7 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin:0; width:100%; height:100%; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif; background:#79b9ee; color:white; touch-action:none; }
 #game { position:fixed; inset:0; }
-#game canvas { display:block; width:100%; height:100%; }
+#game canvas { display:block; width:100%; height:100%; touch-action:none !important; user-select:none; -webkit-user-select:none; }
 button, select { color:white; background:rgba(25,37,48,.88); border:2px solid #ffffff88; border-radius:10px; padding:10px 12px; font-weight:bold; font-size:14px; cursor:pointer; touch-action:manipulation; }
 button:active { transform:scale(.96); background:#4c7e48; }
 .topbar { position:fixed; z-index:5; top:0; left:0; right:0; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px; background:linear-gradient(#0008,transparent); pointer-events:none; }
@@ -41,11 +41,15 @@ button:active { transform:scale(.96); background:#4c7e48; }
 #toast.show { opacity:1; }
 .inventory-panel { text-align:left; }
 .inventory-panel h2, .inventory-panel h3 { text-align:center; }
-.inventory-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
-.inv-item { background:#ffffff17; border:1px solid #ffffff44; border-radius:7px; padding:7px; font-size:12px; }
+.inventory-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; padding:4px 0 12px; }
+.inv-item { background:rgba(255,255,255,.12); border:1px solid #ffffff44; border-radius:9px; padding:10px 8px; font-size:13px; line-height:1.35; overflow-wrap:anywhere; }
 .recipes { display:grid; grid-template-columns:1fr; gap:6px; }
-.recipe { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:7px; background:#ffffff17; border-radius:7px; font-size:12px; }
+.recipe { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px; background:rgba(255,255,255,.12); border:1px solid #ffffff22; border-radius:9px; font-size:12px; white-space:pre-line; }
 .recipe button { width:auto; min-width:95px; margin:0; padding:8px; font-size:11px; }
+@media (max-width:700px) {
+  .panel { padding:16px; }
+  .inventory-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
 @media (max-width:500px) {
   #status { display:none; }
   #controls { bottom:72px; padding:6px; }
