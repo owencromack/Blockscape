@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#75b9ef">
+  <title>BlockScape - Sandbox</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game"></div>
+
+  <header class="topbar">
+    <div class="logo">🧱 BlockScape</div>
+    <div class="top-actions">
+      <span id="status">World ready</span>
+      <button id="saveBtn">💾 Save</button>
+      <button id="menuBtn">☰</button>
+    </div>
+  </header>
+
+  <div id="crosshair">+</div>
+
+  <div id="welcome" class="overlay">
+    <div class="panel">
+      <h1>🧱 BlockScape</h1>
+      <p>Explore, build, and create your own block world!</p>
+      <button id="playBtn" class="primary">Play World</button>
+      <button id="newBtn">Generate New World</button>
+      <p class="hint">Touch the screen to look around.</p>
+    </div>
+  </div>
+
+  <div id="pauseMenu" class="overlay hidden">
+    <div class="panel">
+      <h2>Game Menu</h2>
+      <button id="resumeBtn" class="primary">Resume</button>
+      <button id="menuSaveBtn">Save World</button>
+      <button id="helpBtn">How to Play</button>
+      <button id="closeMenuBtn">Close Menu</button>
+    </div>
+  </div>
+
+  <div id="helpMenu" class="overlay hidden">
+    <div class="panel">
+      <h2>How to Play</h2>
+      <p>• Use the directional pad to move.</p>
+      <p>• Drag the right side of the screen to look around.</p>
+      <p>• Tap a block to select it, then press BREAK.</p>
+      <p>• Aim at a block and press PLACE to add a block.</p>
+      <p>• Choose blocks using the bottom hotbar.</p>
+      <p>• Your saved world stays on this browser and device.</p>
+      <button id="helpBackBtn" class="primary">Back</button>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div id="dpad">
+      <button class="move" data-move="forward">▲</button>
+      <button class="move" data-move="left">◀</button>
+      <button class="move" data-move="back">▼</button>
+      <button class="move" data-move="right">▶</button>
+    </div>
+
+    <div id="actions">
+      <button id="jumpBtn">⬆ JUMP</button>
+      <button id="breakBtn">⛏ BREAK</button>
+      <button id="placeBtn">🧱 PLACE</button>
+    </div>
+  </div>
+
+  <div id="hotbar"></div>
+
+  <div id="toast"></div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
