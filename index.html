@@ -11,88 +11,22 @@
   <div id="game"></div>
   <header class="topbar">
     <div class="logo">🧱 BlockScape</div>
-    <div class="top-actions">
-      <span id="status">World ready</span>
-      <button id="saveBtn">💾 Save</button>
-      <button id="menuBtn">☰</button>
-    </div>
+    <div class="top-actions"><span id="status">World ready</span><button id="saveBtn">💾 Save</button><button id="menuBtn">☰</button></div>
   </header>
-
-  <div id="hud">
-    <div id="modeLabel">SURVIVAL</div>
-    <div id="health" aria-label="Health">❤️❤️❤️❤️❤️</div>
-    <div id="dayLabel">Day 1 · Morning</div>
-  </div>
+  <div id="hud"><div id="modeLabel">SURVIVAL</div><div id="health" aria-label="Health">❤️❤️❤️❤️❤️</div><div id="dayLabel">Day 1 · Morning</div></div>
   <div id="crosshair">+</div>
-
-  <div id="welcome" class="overlay">
-    <div class="panel">
-      <h1>🧱 BlockScape</h1>
-      <p>Explore, build, craft, and survive in your own block world.</p>
-      <label for="worldMode">World mode</label>
-      <select id="worldMode">
-        <option value="survival">Survival</option>
-        <option value="creative">Creative</option>
-      </select>
-      <button id="playBtn" class="primary">Play / Continue</button>
-      <button id="newBtn">Create New World</button>
-      <p class="hint">Move with the D-pad or WASD. Drag the right side to look.</p>
-    </div>
-  </div>
-
-  <div id="pauseMenu" class="overlay hidden">
-    <div class="panel">
-      <h2>Game Menu</h2>
-      <button id="resumeBtn" class="primary">Resume</button>
-      <button id="menuSaveBtn">Save World</button>
-      <button id="helpBtn">How to Play</button>
-      <button id="closeMenuBtn">Main Menu</button>
-    </div>
-  </div>
-
-  <div id="helpMenu" class="overlay hidden">
-    <div class="panel">
-      <h2>How to Play</h2>
-      <p>Move: WASD / arrow keys or D-pad.</p>
-      <p>Look: drag the right side of the screen.</p>
-      <p>Break / punch: E or BREAK. Place: Q or PLACE.</p>
-      <p>Jump: Space or JUMP. Eat: EAT.</p>
-      <p>Tap a hotbar slot to select it. Open Inventory to craft items.</p>
-      <p>Survival: mine resources, eat food, and avoid slimes at night.</p>
-      <p>Creative: unlimited blocks and flight (tap JUMP while airborne).</p>
-      <button id="helpBackBtn" class="primary">Back</button>
-    </div>
-  </div>
-
-  <div id="inventoryPanel" class="overlay hidden">
-    <div class="panel inventory-panel">
-      <h2>Inventory & Crafting</h2>
-      <div id="inventoryList" class="inventory-list"></div>
-      <h3>Crafting recipes</h3>
-      <div id="recipes" class="recipes"></div>
-      <button id="closeInventoryBtn" class="primary">Close</button>
-    </div>
-  </div>
-
-  <div id="controls">
-    <div id="dpad">
-      <button class="move" data-move="forward">▲</button>
-      <button class="move" data-move="left">◀</button>
-      <button class="move" data-move="back">▼</button>
-      <button class="move" data-move="right">▶</button>
-    </div>
-    <div id="actions">
-      <button id="jumpBtn">⬆ JUMP</button>
-      <button id="breakBtn">⛏ BREAK</button>
-      <button id="placeBtn">🧱 PLACE</button>
-      <button id="eatBtn">🍎 EAT</button>
-      <button id="inventoryBtn">🎒 INVENTORY</button>
-    </div>
-  </div>
-
-  <div id="hotbar"></div>
-  <div id="toast"></div>
-
+  <div id="welcome" class="overlay"><div class="panel">
+    <h1>🧱 BlockScape</h1><p>Explore, build, craft, and survive in your own block world.</p>
+    <label for="worldMode">World mode</label><select id="worldMode"><option value="survival">Survival</option><option value="creative">Creative</option></select>
+    <button id="playBtn" class="primary">Play / Continue</button><button id="newBtn">Create New World</button>
+    <p class="hint">Move with the D-pad or WASD. Drag the right side to look.</p>
+  </div></div>
+  <div id="pauseMenu" class="overlay hidden"><div class="panel"><h2>Game Menu</h2><button id="resumeBtn" class="primary">Resume</button><button id="menuSaveBtn">Save World</button><button id="helpBtn">How to Play</button><button id="closeMenuBtn">Main Menu</button></div></div>
+  <div id="helpMenu" class="overlay hidden"><div class="panel"><h2>How to Play</h2><p>Move: WASD / arrow keys or D-pad.</p><p>Look: drag the right side of the screen.</p><p>Break / punch: E or BREAK. Place: Q or PLACE.</p><p>Jump: Space or JUMP. Eat: EAT.</p><p>Tap a hotbar slot to select it. Open Inventory to craft items.</p><p>Survival: mine resources, eat food, and avoid slimes at night.</p><p>Creative: unlimited blocks and flight (tap JUMP while airborne).</p><button id="helpBackBtn" class="primary">Back</button></div></div>
+  <div id="inventoryPanel" class="overlay hidden"><div class="panel inventory-panel"><h2>Inventory &amp; Crafting</h2><div id="inventoryList" class="inventory-list"></div><h3>Crafting recipes</h3><div id="recipes" class="recipes"></div><button id="closeInventoryBtn" class="primary">Close</button></div></div>
+  <div id="controls"><div id="dpad"><button class="move" data-move="forward">▲</button><button class="move" data-move="left">◀</button><button class="move" data-move="back">▼</button><button class="move" data-move="right">▶</button></div>
+    <div id="actions"><button id="jumpBtn">⬆ JUMP</button><button id="breakBtn">⛏ BREAK</button><button id="placeBtn">🧱 PLACE</button><button id="eatBtn">🍎 EAT</button><button id="inventoryBtn">🎒 INVENTORY</button></div></div>
+  <div id="hotbar"></div><div id="toast"></div>
   <script type="module" src="game.js"></script>
 </body>
 </html>
